@@ -577,7 +577,7 @@ function setVol(e){const[x]=pt(e);CFG.v=Math.round(Math.max(0,Math.min(1,1-(x-SL
 cv.addEventListener('pointerdown',e=>{LP=pt(e);if(st==='set'&&Math.abs(LP[1]-SL.y)<24&&LP[0]>SL.x-16&&LP[0]<SL.x+SL.w+16){drag=1;setVol(e)}},true);
 cv.addEventListener('pointermove',e=>{if(drag)setVol(e)});
 addEventListener('pointerup',()=>{if(drag){drag=0;saveCfg();snd(660,.12)}});
-function settings(){const ow=!!S.owner,ch=ow?490:424;g.fillStyle='#000b';g.fillRect(0,0,W,H);
+function settings(){const ow=!!S.owner,ch=ow?490:530;g.fillStyle='#000b';g.fillRect(0,0,W,H);
  g.save();if(CFG.g){g.shadowColor='#000a';g.shadowBlur=22;g.shadowOffsetY=8}g.fillStyle='#fff7e0';rr(22,70,316,ch,24);g.fill();g.restore();g.strokeStyle='#e07b00';g.lineWidth=4;rr(22,70,316,ch,24);g.stroke();
  tx('⚙️ الإعدادات',W/2,112,28,'#b3261e');
  tx('الجرافيك',W-38,158,19,'#5a3a22','right');
@@ -589,7 +589,8 @@ function settings(){const ow=!!S.owner,ch=ow?490:424;g.fillStyle='#000b';g.fillR
  tx('🔈',324,SL.y,18,'#000');tx('🔊',36,SL.y,18,'#000');
  btn(80,364,200,46,mute?'#5a4a3e':'#2b8a3e',mute?'🔇 الصوت مكتوم':'🔊 الصوت شغّال',()=>{CFG.m=mute=!mute;saveCfg()},17);
  if(ow){tx('👑 حساب المالك: كل حاجة مفتوحة',W/2,438,14,'#7a5a3e');btn(80,452,200,40,'#5a4a3e','تسجيل خروج',ownerOut,16)}
- btn(110,ow?502:442,140,46,'','رجوع',()=>{st='menu'},18)}
+ if(!ow)btn(80,424,200,40,'#5a4a3e','🔑 دخول بحساب تاني / المالك',()=>{st='menu';askName()},15);
+ btn(110,ow?502:484,140,46,'','رجوع',()=>{st='menu'},18)}
 
 /* دخول المالك */
 function ownerGrant(){S.ob=BIRDS.map((_,i)=>i);S.ot=THEMES.map((_,i)=>i);S.op=PIPES.map((_,i)=>i);S.coins=Math.max(S.coins,999999)}
