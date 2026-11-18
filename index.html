@@ -650,7 +650,7 @@ if(S.bird>=BIRDS.length)S.bird=0;if(S.theme>=THEMES.length)S.theme=0;if(S.owner)
 
 /* ===== v5: Supabase + المتصدرين ===== */
 function sbOn(){return typeof SB_URL==='string'&&SB_URL.indexOf('http')===0&&SB_URL.indexOf('PUT_')<0&&SB_KEY.length>20&&SB_KEY.indexOf('PUT_')<0}
-async function sb(fn,args){const r=await fetch(SB_URL.replace(/\/$/,'')+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY},body:JSON.stringify(args)});if(!r.ok)throw new Error('http '+r.status);return r.json()}
+async function sb(fn,args){const r=await fetch(SB_URL.replace(/\/$/,'')+'/rest/v1/rpc/'+fn,{method:'POST',headers:{'Content-Type':'application/json',apikey:SB_KEY},body:JSON.stringify(args)});if(!r.ok){let m='';try{m=(await r.text()).slice(0,120)}catch(_){}throw new Error('HTTP '+r.status+' '+m)}return r.json()}
 function pdata(){return{coins:S.coins|0,best:S.best|0,bird:S.bird|0,theme:S.theme|0,ob:S.ob||[0],ot:S.ot||[0],pipe:S.pipe|0,op:S.op||[0]}}
 var _sct=0;
 function cloudSave(){if(!sbOn()||!S.name||!S.ph||S.owner)return;clearTimeout(_sct);_sct=setTimeout(pushNow,1500)}
@@ -678,7 +678,7 @@ function askName(){const d=document.createElement('div');d.style.cssText='positi
 /* شاشة المتصدرين */
 var LB={tab:'best',rows:{},load:{}};
 function openLB(){st='lb';loadLB(LB.tab)}
-async function loadLB(k){if(!sbOn()){LB.load[k]=-2;return}LB.load[k]=1;try{LB.rows[k]=await sb('get_leaderboard',{p_kind:k,p_limit:10});LB.load[k]=2}catch(e){LB.load[k]=-1}}
+async function loadLB(k){if(!sbOn()){LB.load[k]=-2;return}LB.load[k]=1;try{LB.rows[k]=await sb('get_leaderboard',{p_kind:k,p_limit:10});LB.load[k]=2}catch(e){LB.load[k]=-1;LB.err=String(e&&e.message||e)}}
 function lbScreen(){const q=g.createLinearGradient(0,0,0,H);q.addColorStop(0,'#1d4166');q.addColorStop(1,'#0f2238');g.fillStyle=q;g.fillRect(0,0,W,H);
  tx('🏆 المتصدرين',W/2,36,30,'#ffd23f','center','#5a2d00');
  btn(190,64,150,44,LB.tab==='best'?'':'#5a4a3e','🏅 السكور',()=>{LB.tab='best';loadLB('best')},17);
@@ -686,7 +686,7 @@ function lbScreen(){const q=g.createLinearGradient(0,0,0,H);q.addColorStop(0,'#1
  const k=LB.tab,ld=LB.load[k],rows=LB.rows[k]||[];
  if(ld===1&&!rows.length)tx('بيحمّل...',W/2,300,20,'#fff');
  else if(ld===-2)tx('السيرفر لسه متظبطش',W/2,300,18,'#ffd23f');
- else if(ld===-1&&!rows.length)tx('مش قادر يتصل بالسيرفر',W/2,300,18,'#ffd23f');
+ else if(ld===-1&&!rows.length){tx('مش قادر يتصل بالسيرفر',W/2,260,18,'#ffd23f');const m=(LB.err||'').slice(0,90);tx(m.slice(0,45),W/2,300,12,'#fff');tx(m.slice(45),W/2,320,12,'#fff')}
  else if(ld===2&&!rows.length)tx('لسه مفيش لاعبين',W/2,300,18,'#fff');
  const M=['🥇','🥈','🥉'];
  rows.forEach((r,i)=>{const y=124+i*43,me=r.name===S.name;
